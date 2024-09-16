@@ -140,4 +140,4 @@ else: # If the list is not empty
     
     Total_Value = np.array(product_list["Preço"]) * np.array(product_list["Quantidade"])
     
-    middle.write("Total da Compra:  R$" + str(sum(Total_Value)).replace(".", ",")) # Show the total value of the products
+    middle.write("Total da Compra:  R$" + f"{sum(Total_Value):.2f}".replace(".", ",")) # Show the total value of the products

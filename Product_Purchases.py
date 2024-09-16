@@ -25,7 +25,7 @@ def registration_product(database, path, word = None, option = None):
         quantidade = right.number_input("Digite a quantidade do produto", min_value = 1, value = database.loc[pos, "Quantidade"]) # Input for the quantity of the product
     
     
-    if not product in database["Produto"].values or option == "Editar produtos da lista": # If the product is not in the list
+    if not product.lower() in str(database["Produto"].values).lower() or option == "Editar produtos da lista": # If the product is not in the list
         if preco != 0 and re.sub(r"[^a-zà-öø-ÿç]", '', product.lower()) != "": # If the price was different from 0 and the product name is not empty
             if st.button("Adicionar o produto na lista"):  # Button to add the product to the list
                 if word is None:

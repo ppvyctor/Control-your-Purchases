@@ -2,8 +2,8 @@ import streamlit as st
 import re
 import regex
 import pandas as pd
-from pathlib import Path
 import numpy as np
+import tempfile
 
 def registration_product(database, path, word = None, option = None):
     if word is None:
@@ -40,8 +40,8 @@ def registration_product(database, path, word = None, option = None):
                     database.to_csv(path, index = False)
                     
 
-path = str(Path.home()) # Path to the user's home directory
-path = "\\".join([path, "Downloads", "product_list.csv"]) # Path to the file where the products will be saved
+
+path = tempfile.gettempdir() + "/product_list.csv"# Path to the user's home directory
 
 try:
     product_list = pd.read_csv(path) # Try to read the file

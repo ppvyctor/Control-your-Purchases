@@ -1,4 +1,4 @@
 # Control-your-Purchases
-This program is designed for people who shop at supermarkets. When you're shopping, you may want to keep track of the items you're purchasing, and this website is dedicated to solving that problem.
+This program is designed for supermarket shoppers who want to keep track of their purchases. It provides an easy-to-use platform that helps you manage and monitor the items you add to your cart, ensuring a more organized and efficient shopping experience
 
 [Link to website!! 🛒](https://control-purchases.streamlit.app/)

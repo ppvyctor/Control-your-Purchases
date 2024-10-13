@@ -104,12 +104,15 @@ if choose == "Feedback":
                     new_data.to_excel("DataBase/feedback.xlsx", index = False)
                 
 
-                repository = git.Repo(r"C:\Users\PP\OneDrive - Fundação São Paulo\Projetos\Control-your-Purchases")
+                path = ""
+                url = r"https://github.com/ppvyctor/Control-your-Purchases"
+                git.Repo.clone_from(url, path)
+                
+                repository = git.Repo(path)
                 repository.git.add(update = True)
                 repository.index.commit("adding the feedback for the user")
                 
-                original = repository.remote(name="origin")
-                repository.git.push(r"https://github.com/ppvyctor/Control-your-Purchases", "main")
+                repository.git.push(url, "main")
                  
                 st.markdown("# **Feedback enviado com sucesso!!**")
                 st.balloons()

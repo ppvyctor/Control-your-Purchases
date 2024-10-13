@@ -56,16 +56,7 @@ if st.sidebar.button("Limpar lista de produtos"): # If the button is clicked
     product_list = pd.DataFrame({"Produto": [], "Preço": [], "Quantidade": []}) # Create a new DataFrame
     product_list.to_csv(path, index = False) # Save the DataFrame to the file
 
-st.markdown(
-    """
-    <style>
-    .stRadio > div {
-        gap: 426px; /* Adjust the value to change the spacing */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+
 choose = st.radio("", ["Gestão de Compras", "Feedback"], horizontal = True) # Selectbox with the options
 
 

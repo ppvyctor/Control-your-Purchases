@@ -4,7 +4,7 @@ import regex
 import pandas as pd
 import numpy as np
 import tempfile
-import mysql.connector
+import pandas as pd
 
 
 def registration_product(database, path, word = None, option = None):
@@ -87,37 +87,30 @@ if choose == "Feedback":
     
     else:
         aux = last_name
-        if re.sub(r'[A-Za-z ]', '', aux) != '':
-            st.markdown('- O campo "Nome" está vazio ou não está preenchido corretamente.')
+        if re.sub(r'[A-Za-z ]', '', aux) != '': st.markdown('- O campo "Nome" está vazio ou não está preenchido corretamente.')
+        
+        aux = email
+        if re.sub(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', '', aux) != '':
+            st.markdown('- O campo "E-mail" não está preenchido corretamente.')
         
         else:
-            aux = email
-            if re.sub(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', '', aux) != '':
-                st.markdown('- O campo "E-mail" não está preenchido corretamente.')
+            left, right = st.columns([0.7, 0.3])
             
-            else:
-                left, right = st.columns([0.7, 0.3])
+            if right.button("Enviar feedback"):
+                new_data = {"first_name": first_name,
+                            "last_name": last_name,
+                            "email": email,
+                            "stars": stars,
+                            "opinion": opinion}
+                new_data = pd.DataFrame([new_data])
                 
-                if right.button("Enviar feedback"):
-                    connection = mysql.connector.connect(host = "localhost",
-                                                        user = "root",
-                                                        password = "51Utrt30@#",
-                                                        database = "filiais")
-                    cursor = connection.cursor()
-                    
-                    feedback_query = "INSERT INTO opinions (first_name, last_name, email, stars, opinion) VALUES (%s, %s, %s, %s, %s)"
-                    feedback_data = (first_name, last_name, email, stars, opinion)
-                    
-                    cursor.execute(feedback_query, feedback_data)
-                    connection.commit()
-
-                    cursor.close()
-                    connection.close()
-
-                    for x in range(100000000): pass
-                    
-                    st.markdown("### Feedback enviado com sucesso!!")
-                    st.rerun()
+                try:
+                    database = pd.read_excel("feedback.xlsx")
+                    database = pd.concat([database, new_data], ignore_index = True)
+                    database.to_excel("feedback.xlsx", index = False)
+                
+                except:
+                    new_data.to_excel("feedback.xlsx", index = False)
                         
     
 else:

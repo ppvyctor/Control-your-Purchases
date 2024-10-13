@@ -4,7 +4,7 @@ import regex
 import pandas as pd
 import numpy as np
 import tempfile
-import pandas as pd
+import git
 
 
 def registration_product(database, path, word = None, option = None):
@@ -102,7 +102,18 @@ if choose == "Feedback":
                 
                 except:
                     new_data.to_excel("DataBase/feedback.xlsx", index = False)
+                
+                try:
+                    repository = git.Repo(r"C:\Users\PP\OneDrive - Fundação São Paulo\Projetos\Control-your-Purchases")
+                    repository.git.add(update = True)
+                    repository.index.commit("adding the feedback for the user")
                     
+                    original = repository.remote(name="origin")
+                    repository.git.push(r"https://github.com/ppvyctor/Control-your-Purchases", "main")
+                
+                except:
+                    pass
+                 
                 st.markdown("# **Feedback enviado com sucesso!!**")
                 st.balloons()
                         

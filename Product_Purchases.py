@@ -96,12 +96,12 @@ if choose == "Feedback":
                 new_data = pd.DataFrame([new_data])
                 
                 try:
-                    database = pd.read_excel("feedback.xlsx")
+                    database = pd.read_excel(r"DataBase/feedback.xlsx")
                     database = pd.concat([database, new_data], ignore_index = True)
-                    database.to_excel("feedback.xlsx", index = False)
+                    database.to_excel("DataBase/feedback.xlsx", index = False)
                 
                 except:
-                    new_data.to_excel("feedback.xlsx", index = False)
+                    new_data.to_excel("DataBase/feedback.xlsx", index = False)
                         
     
 else:

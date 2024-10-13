@@ -102,6 +102,9 @@ if choose == "Feedback":
                 
                 except:
                     new_data.to_excel("DataBase/feedback.xlsx", index = False)
+                    
+                st.markdown("# **Feedback enviado com sucesso!!**")
+                st.balloons()
                         
     
 else:

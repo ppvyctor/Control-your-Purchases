@@ -113,12 +113,10 @@ if choose == "Feedback":
                     if process.returncode != 0:
                         st.write(f"### Command failed: {command}")
                         break
-                    else:
-                        st.write(f"### Command succeeded: {command}")
                  
-                 
-                st.markdown("# **Feedback enviado com sucesso!!**")
-                st.balloons()
+                if process.returncode == 0:
+                    st.markdown("# **Feedback enviado com sucesso!!**")
+                    st.balloons()
                         
     
 else:

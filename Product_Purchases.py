@@ -113,7 +113,7 @@ if choose == "Feedback":
 
                 # Git commands
                 subprocess.run(['git', 'add', '.'], check=True)
-                subprocess.run(['git', 'commit', '-m', 'Updating repository'], check=True)
+                subprocess.run(['git', 'commit', '-m', '"Updating repository"'], check=True)
                 subprocess.run(['git', 'push', 'origin', 'main'], check=True)
                 st.success("Repository updated successfully!")
                  

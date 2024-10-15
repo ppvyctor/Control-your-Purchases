@@ -4,7 +4,7 @@ import regex
 import pandas as pd
 import numpy as np
 import tempfile
-import git
+import subprocess
 
 
 def registration_product(database, path, word = None, option = None):
@@ -104,15 +104,18 @@ if choose == "Feedback":
                     new_data.to_excel("DataBase/feedback.xlsx", index = False)
                 
 
-                path = ""
-                url = r"https://github.com/ppvyctor/Control-your-Purchases"
-                git.Repo.clone_from(url, path)
+                commands = ["git add .",
+                            'git commit -m "Feedback enviado"',
+                            "git push origin main"]
                 
-                repository = git.Repo(path)
-                repository.git.add(update = True)
-                repository.index.commit("adding the feedback for the user")
-                
-                repository.git.push(url, "main")
+                for command in commands:
+                    process = subprocess.run(command, shell = True, check = True)
+                    if process.returncode != 0:
+                        st.write(f"### Command failed: {command}")
+                        break
+                    else:
+                        st.write(f"### Command succeeded: {command}")
+                 
                  
                 st.markdown("# **Feedback enviado com sucesso!!**")
                 st.balloons()

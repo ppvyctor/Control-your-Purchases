@@ -104,19 +104,22 @@ if choose == "Feedback":
                     new_data.to_excel("DataBase/feedback.xlsx", index = False)
                 
 
-                commands = ["git add .",
-                            'git commit -m "Feedback enviado"',
-                            "git push origin main"]
+
+                token = "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"
+                repositorio = f"https://{token}@github.com/your_username/your_repo.git"
                 
-                for command in commands:
-                    process = subprocess.run(command, shell = True, check = True)
-                    if process.returncode != 0:
-                        st.write(f"### Command failed: {command}")
-                        break
+                # Set the remote URL with the token
+                subprocess.run(['git', 'remote', 'set-url', 'origin', repositorio], check=True)
+
+                # Git commands
+                subprocess.run(['git', 'add', '.'], check=True)
+                subprocess.run(['git', 'commit', '-m', 'Updating repository'], check=True)
+                subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+                st.success("Repository updated successfully!")
                  
-                if process.returncode == 0:
-                    st.markdown("# **Feedback enviado com sucesso!!**")
-                    st.balloons()
+                 
+                st.markdown("# **Feedback enviado com sucesso!!**")
+                st.balloons()
                         
     
 else:

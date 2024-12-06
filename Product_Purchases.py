@@ -4,7 +4,7 @@ import regex
 import pandas as pd
 import numpy as np
 import tempfile
-import subprocess
+import mysql
 
 
 def registration_product(database, path, word = None, option = None):
@@ -21,10 +21,15 @@ def registration_product(database, path, word = None, option = None):
                     pos = x
                     break
         
-        product = st.text_input("Digite o nome do produto", value = database.loc[pos, "Produto"])
+        product = st.text_input("Digite o nome do produto", value = database.loc[pos, "Produto"], key="product_input_edit")
         left, right = st.columns(2) # Split the screen in two columns
         preco = left.number_input("Digite o preço *UNITÁRIO* do produto", min_value = 0.0, value = database.loc[pos, "Preço"]) # Input for the price of the product
-        quantidade = right.number_input("Digite a quantidade do produto", min_value = 1, value = database.loc[pos, "Quantidade"]) # Input for the quantity of the product
+        
+        try:
+            quantidade = right.number_input("Digite a quantidade do produto", min_value = 1, value = database.loc[pos, "Quantidade"]) # Input for the quantity of the product
+        
+        except ValueError:
+            quantidade //= 1
     
     
     if not product.lower() in str(database["Produto"].values).lower() or option == "Editar produtos da lista": # If the product is not in the list
@@ -105,16 +110,7 @@ if choose == "Feedback":
                 
 
 
-                token = "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"
-                repositorio = f"https://{token}@github.com/your_username/your_repo.git"
                 
-                # Set the remote URL with the token
-                subprocess.run(['git', 'remote', 'set-url', 'origin', repositorio], check=True)
-
-                # Git commands
-                subprocess.run(['git', 'add', '.'], check=True)
-                subprocess.run(['git', 'commit', '-m', '"Updating repository"'], check=True)
-                subprocess.run(['git', 'push', 'origin', 'main'], check=True)
                 st.success("Repository updated successfully!")
                  
                  
@@ -157,6 +153,8 @@ else:
                     word = st.selectbox("Escolha o produto desejado", research)
                     
                     st.write("---")
+                    
+                    st.markdown(f'<h2><b>Informações do Produto</b></h2>', unsafe_allow_html = True)
                     
                     registration_product(database = product_list, path = path, word = word, option = option)
                     

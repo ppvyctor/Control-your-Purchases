@@ -215,6 +215,6 @@ else:
         left, middle, right = st.columns([0.25, 0.5, 0.25]) # Split the screen in three columns
         middle.dataframe(product_list) # Show database
         
-        Total_Value = np.array(product_list["Preço"]) * np.array(product_list["Quantidade"])
+        Total_Value = np.array(product_list["Total"], dtype = float) # Get the total value of the products
         
         middle.write("Total da Compra:  R$" + f"{sum(Total_Value):.2f}".replace(".", ",")) # Show the total value of the products

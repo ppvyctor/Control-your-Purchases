@@ -11,22 +11,19 @@ def registration_product(database, path, word = None, option = None):
     if word is None:
         product = st.text_input("Digite o nome do produto")
         left, right = st.columns(2) # Split the screen in two columns
-        preco = left.number_input("Digite o preço *UNITÁRIO* do produto", min_value = 0.0) # Input for the price of the product
+        preco = left.number_input("Digite o preço *UNITÁRIO* do produto", min_value = 0.0, step = 1.0) # Input for the price of the product
         quantidade = right.number_input("Digite a quantidade do produto", min_value = 1) # Input for the quantity of the product
     
     else:
-        pos = 0
-        for x in range(database.shape[0]):
-                if database.loc[x, "Produto"] == word:
-                    pos = x
-                    break
+        databaseCopy = database.set_index("Produto")
+        requestRow = databaseCopy.loc[word]
         
-        product = st.text_input("Digite o nome do produto", value = database.loc[pos, "Produto"], key="product_input_edit")
+        product = st.text_input("Digite o nome do produto", value = word, key="product_input_edit")
         left, right = st.columns(2) # Split the screen in two columns
-        preco = left.number_input("Digite o preço *UNITÁRIO* do produto", min_value = 0.0, value = database.loc[pos, "Preço"]) # Input for the price of the product
+        preco = left.number_input("Digite o preço *UNITÁRIO* do produto", min_value = 0.0, value = float(requestRow["Preço"]), step = 1.0) # Input for the price of the product
         
         try:
-            quantidade = right.number_input("Digite a quantidade do produto", min_value = 1, value = database.loc[pos, "Quantidade"]) # Input for the quantity of the product
+            quantidade = right.number_input("Digite a quantidade do produto", min_value = 1, value = int(requestRow["Quantidade"])) # Input for the quantity of the product
         
         except ValueError:
             quantidade //= 1
@@ -36,15 +33,19 @@ def registration_product(database, path, word = None, option = None):
         if preco != 0 and re.sub(r"[^a-zà-öø-ÿç]", '', product.lower()) != "": # If the price was different from 0 and the product name is not empty
             if st.button("Adicionar o produto na lista"):  # Button to add the product to the list
                 if word is None:
-                    database = pd.concat([database, pd.DataFrame({"Produto": [product], "Preço": [preco], "Quantidade": [quantidade]})], 
+                    database = pd.concat([database, pd.DataFrame({"Produto": np.array([product], dtype = str), 
+                                                                  "Preço": np.array([preco], dtype = float),
+                                                                  "Quantidade": np.array([quantidade], dtype = int),
+                                                                  "Total": np.array([preco * quantidade], dtype = float)})], 
                                                 ignore_index = True) # Add the product to the list
                     database.to_csv(path, index = False) # Save the list to the file
                 
                 else:
-                    database.loc[pos, "Produto"] = product
-                    database.loc[pos, "Preço"] = preco
-                    database.loc[pos, "Quantidade"] = quantidade
-                    database.to_csv(path, index = False)
+                    databaseCopy = databaseCopy.rename({word: product})
+                    databaseCopy.loc[product, "Preço"] = preco
+                    databaseCopy.loc[product, "Quantidade"] = quantidade
+                    databaseCopy.loc[product, "Total"] = preco * quantidade
+                    databaseCopy.to_csv(path)
                     
 
 
@@ -53,12 +54,18 @@ path = tempfile.gettempdir() + "/product_list.csv"# Path to the user's home dire
 try:
     product_list = pd.read_csv(path) # Try to read the file
 except:
-    product_list = pd.DataFrame({"Produto": [], "Preço": [], "Quantidade": []}) # If the file doesn't exist, create a new DataFrame
+    product_list = pd.DataFrame({"Produto": np.array([], dtype = str),
+                                 "Preço": np.array([], dtype = float),
+                                 "Quantidade": np.array([], dtype = int),
+                                 "Total": np.array([], dtype = float)}) # If the file doesn't exist, create a new DataFrame
     product_list.to_csv(path, index = False) # Save the DataFrame to the file
 
 
 if st.sidebar.button("Limpar lista de produtos"): # If the button is clicked
-    product_list = pd.DataFrame({"Produto": [], "Preço": [], "Quantidade": []}) # Create a new DataFrame
+    product_list = pd.DataFrame({"Produto": np.array([], dtype = str),
+                                 "Preço": np.array([], dtype = float),
+                                 "Quantidade": np.array([], dtype = int),
+                                 "Total": np.array([], dtype = float)}) # Create a new DataFrame
     product_list.to_csv(path, index = False) # Save the DataFrame to the file
 
 
@@ -147,9 +154,13 @@ else:
                     research = "(" + word + ")" + "{e<=" + str(len(word) // 3) + "}" # Create a regex pattern to search for the product name
                 else:
                     research = f"({word})" + "{e<=1}"
-                research = [product_list.loc[x, "Produto"] for x in range(product_list.shape[0]) if regex.findall(research, product_list.loc[x, "Produto"].lower()) != []] # Search for the product name in the list
+                    
+
+                research = [product_list.loc[x, "Produto"] 
+                            for x in range(product_list.shape[0])
+                            if regex.findall(research, product_list.loc[x, "Produto"].lower()) != []] # Search for the product name in the list
                 
-                if word != []:
+                if research != []: #np.array([], dtype = str):
                     word = st.selectbox("Escolha o produto desejado", research)
                     
                     st.write("---")
@@ -180,7 +191,7 @@ else:
                     research = f"({word})" + "{e<=1}"
                 research = [product_list.loc[x, "Produto"] for x in range(product_list.shape[0]) if regex.findall(research, product_list.loc[x, "Produto"].lower()) != []] # Search for the product name in the list
                 
-                if word != []:
+                if research != []:
                     word = st.selectbox("Escolha o produto desejado", research)
                     
                     if st.button("Remover produto"):
